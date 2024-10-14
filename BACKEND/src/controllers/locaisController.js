@@ -53,6 +53,48 @@ class locaisController {
         }
     };
 
+    async consultarLocais(req, res) {
+        try {
+            const userId = req.user.sub; // Obtém o ID do usuário a partir do token
+            const locaisUsuario = await Locais.findAll({
+                where: {
+                    id_usuario: userId // Filtra locais apenas para o usuário
+                }
+            });
+    
+            if (locaisUsuario.length > 0) {
+                res.json(locaisUsuario);
+            } else {
+                res.status(404).json({ error: 'Nenhum local encontrado para o usuário' });
+            }
+        } catch (error) {
+            console.error('Erro ao consultar locais do usuário:', error);
+            res.status(500).json({ error: 'Erro ao processar a solicitação' });
+        }
+    };
+
+    async consultarum(req, res) {
+        try {
+            const userId = req.user.sub; // Obtém o ID do usuário a partir do token
+            const localId = req.params.local_id;
+            const locaisUsuario = await Locais.findAll({
+                where: {
+                    id_usuario: userId, // Filtra locais apenas para o usuário
+                    id: localId
+                }
+            });
+    
+            if (locaisUsuario.length > 0) {
+                res.json(locaisUsuario);
+            } else {
+                res.status(404).json({ error: 'Nenhum local encontrado para o usuário' });
+            }
+        } catch (error) {
+            console.error('Erro ao consultar locais do usuário:', error);
+            res.status(500).json({ error: 'Erro ao processar a solicitação' });
+        }
+    };
+
     async consultarTotal(req, res) {
 
         try {
@@ -70,10 +112,11 @@ class locaisController {
     };
 
     async deletar(req, res) {
-
         try {
             const userId = req.user.sub;
             const localId = req.params.local_id;
+    
+            console.log(`Tentando excluir o local com ID: ${localId} para o usuário: ${userId}`);
     
             const localUsuario = await Locais.findOne({
                 where: {
@@ -92,22 +135,14 @@ class locaisController {
                     id_usuario: userId
                 }
             });
-            
-            if (localUsuario) {
-                return res.status(204).json({ message: `Local com o ID ${localId} removido com sucesso!` });
-            }
     
-           
-           
+            return res.status(204).json({ message: `Local com o ID ${localId} removido com sucesso!` });
         } catch (error) {
-            console.error(error.message);
-            res.status(500).json({
-                error: 'Não foi possível deletar o local específico',
-                detalhes: error.message
-            });
+            console.error('Erro ao deletar local:', error);
+            return res.status(500).json({ error: 'Erro ao processar a solicitação' });
         }
     };
-
+    
     async alterar(req, res) {
 
         try {

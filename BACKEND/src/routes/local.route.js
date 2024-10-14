@@ -8,7 +8,11 @@ locaisRoutes.post('/', auth, locaisController.cadastrar);
 
 locaisRoutes.get('/local', locaisController.consultar);
 
+locaisRoutes.get('/localuser', auth, locaisController.consultarLocais);
+
 locaisRoutes.get('/localTotal', locaisController.consultarTotal);
+
+locaisRoutes.get('/localum', locaisController.consultarum);
 
 locaisRoutes.delete('/local/:local_id', auth, locaisController.deletar);
 
