@@ -6,12 +6,39 @@ import logoImg from '../../assets/logogrande.png';
 export default function Header() {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem('userId');
-    localStorage.removeItem('userName');
-    localStorage.clear();
-    navigate('/');
-  };
+  const handleLogout = async () => {
+    const token = localStorage.getItem('token'); 
+
+    if (!token) {
+        alert('Você não está logado.');
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:3000/logout', {
+            method: 'POST',
+            headers: {
+                'Authorization': `${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('token');
+            navigate('/'); 
+
+        } else {
+            const errorData = await response.json();
+            console.error('Erro no logout:', errorData.message);
+            alert(`Erro ao sair: ${errorData.message}`); 
+        }
+    } catch (error) {
+        console.error('Erro ao tentar deslogar:', error);
+        alert('Erro ao tentar sair. Verifique sua conexão e tente novamente.');
+    }
+};
 
   return (
     <header>
